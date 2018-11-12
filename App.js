@@ -5,45 +5,54 @@
  * @format
  * @flow
  */
+import React, { Component } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+//import Icon from 'react-native-vector-icons/Ionicons'
+import {createSwitchNavigator, createStackNavigator, createDrawerNavigator, createBottomTabNavigator} from 'react-navigation';
+import AuthLoadingScreen from './screens/AuthLoadingScreen'
+import SignInScreen from './screens/SignInScreen'
+import SignUpScreen from './screens/SignUpScreen'
+import WelcomeScreen from './screens/WelcomeScreen'
+import SettingsScreen from './screens/SettingsScreen'
+import HomeScreen from './screens/HomeScreen'
 
-import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
-type Props = {};
-export default class App extends Component<Props> {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
-      </View>
-    );
+const AppTabNavigator = createBottomTabNavigator({
+  HomeScreen:{
+    screen: HomeScreen
+  },
+  SettingsScreen:{
+    screen: SettingsScreen
   }
-}
+})
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+const AppStackNavigator = createStackNavigator({
+  AppTabNavigator:{
+    screen: AppTabNavigator,
+    navigationOptions: ({navigation}) => ({
+      title: "Your App",
+      /*headerLeft:(
+        <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
+          <View style={{ paddingHorizontal: 10}}>
+            <Icon name="md-menu" size={24} />
+          </View>
+        </TouchableOpacity>
+      )*/
+    })
+  }
+})
+
+const AppDrawerNavigator = createDrawerNavigator({
+  Home: AppStackNavigator
+})
+
+const AuthStackNavigator = createStackNavigator({
+  Welcome: WelcomeScreen,
+  SignIn: SignInScreen,
+  SignUp: SignUpScreen
+})
+
+export default createSwitchNavigator({
+  AuthLoading: AuthLoadingScreen,
+  Auth: AuthStackNavigator,
+  App: AppDrawerNavigator
+})
